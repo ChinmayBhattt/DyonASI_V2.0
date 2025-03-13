@@ -939,15 +939,15 @@ body.dark-mode {
 
 .articles-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
     padding-bottom: 40px;
 }
 
 .article-card {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     transition: transform 0.2s ease;
     cursor: pointer;
@@ -959,34 +959,38 @@ body.dark-mode {
 
 .article-image {
     width: 100%;
-    height: 200px;
+    height: 160px;
     object-fit: cover;
 }
 
 .article-content {
-    padding: 16px;
+    padding: 12px;
 }
 
 .article-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--text-primary);
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .article-description {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
-    margin-bottom: 16px;
-    line-height: 1.6;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .article-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-secondary);
 }
 

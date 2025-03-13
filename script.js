@@ -1,45 +1,87 @@
 document.addEventListener("DOMContentLoaded", function () {
+    initializeChat();
+});
+
+function initializeChat() {
     const inputField = document.querySelector(".input-field");
     const sendButton = document.querySelector(".send-btn");
     const messagesContainer = document.querySelector(".messages-container");
     const modeSelector = document.querySelector(".mode-selector");
     
-    let chatHistory = [];
-    let currentChatIndex = -1;
-    let isProcessing = false;
+    window.chatHistory = window.chatHistory || [];
+    window.currentChatIndex = window.currentChatIndex || -1;
+    window.isProcessing = false;
+    window.firstMessage = null; // Track first message for chat title
+    window.isChatSaved = false; // Track if current chat is already saved
+
+    // Save existing chat before refresh
+    window.addEventListener('beforeunload', function() {
+        if (messagesContainer && messagesContainer.children.length > 1 && !window.isChatSaved) {
+            const chatContent = Array.from(messagesContainer.children)
+                .map(msg => {
+                    const isUser = msg.classList.contains('user-message');
+                    return `${isUser ? 'User' : 'AI'}: ${msg.textContent}`;
+                })
+                .join('\n');
+            
+            // Get first user message as title
+            const firstUserMessage = Array.from(messagesContainer.children)
+                .find(msg => msg.classList.contains('user-message'))?.textContent || 'Untitled Chat';
+            
+            if (typeof window.saveChat === 'function') {
+                window.saveChat(chatContent, firstUserMessage);
+            }
+        }
+    });
 
     // Auto-resize textarea
-    inputField.addEventListener("input", function() {
-        this.style.height = "auto";
-        this.style.height = (this.scrollHeight) + "px";
-    });
+    if (inputField) {
+        inputField.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+    }
 
     // Handle keyboard shortcuts
     document.addEventListener("keydown", function(e) {
         // Command/Ctrl + K for new thread
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
-            startNewThread();
+            window.startNewThread();
         }
     });
 
-    function showThinkingMessage() {
+    // Add showThinkingMessage as a global function
+    window.showThinkingMessage = function() {
+        const messagesContainer = document.querySelector(".messages-container");
+        if (!messagesContainer) return null;
+
         const thinkingMessage = document.createElement("div");
         thinkingMessage.classList.add("thinking-message");
         thinkingMessage.innerText = "DysonASI is thinking...";
         messagesContainer.appendChild(thinkingMessage);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         return thinkingMessage;
-    }
+    };
 
-    async function sendMessage() {
+    // Expose functions globally
+    window.sendMessage = async function() {
+        const inputField = document.querySelector(".input-field");
+        const messagesContainer = document.querySelector(".messages-container");
+        if (!inputField || !messagesContainer) return;
+
         const message = inputField.value.trim();
-        if (!message || isProcessing) return;
+        if (!message || window.isProcessing) return;
 
-        isProcessing = true;
+        window.isProcessing = true;
         
-        if (currentChatIndex === -1) {
-            startNewThread();
+        // Store first message as chat title
+        if (!window.firstMessage) {
+            window.firstMessage = message;
+        }
+        
+        if (window.currentChatIndex === -1) {
+            window.startNewThread();
         }
 
         // Reset textarea height
@@ -51,11 +93,15 @@ document.addEventListener("DOMContentLoaded", function () {
         userMessageDiv.textContent = message;
         messagesContainer.appendChild(userMessageDiv);
         
-        chatHistory[currentChatIndex].push({ text: message, isUser: true });
+        window.chatHistory[window.currentChatIndex].push({ text: message, isUser: true });
         inputField.value = "";
         
         // Show thinking message
-        const thinkingMessage = showThinkingMessage();
+        const thinkingMessage = window.showThinkingMessage();
+        if (!thinkingMessage) {
+            window.isProcessing = false;
+            return;
+        }
         
         try {
             const response = await fetch("http://localhost:5000/chat", {
@@ -67,10 +113,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             const formattedResponse = formatResponse(data.response || "Sorry, I couldn't understand that.");
 
-            chatHistory[currentChatIndex].push({ text: formattedResponse, isUser: false });
+            window.chatHistory[window.currentChatIndex].push({ text: formattedResponse, isUser: false });
 
             // Remove thinking message and add AI response
-            thinkingMessage.remove();
+            if (thinkingMessage && thinkingMessage.parentNode) {
+                thinkingMessage.remove();
+            }
             
             const aiMessageDiv = document.createElement("div");
             aiMessageDiv.classList.add("message", "ai-message");
@@ -78,58 +126,100 @@ document.addEventListener("DOMContentLoaded", function () {
             messagesContainer.appendChild(aiMessageDiv);
             
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Save chat to library only if it's the first message and not already saved
+            if (!window.isChatSaved && window.firstMessage) {
+                const chatContent = Array.from(messagesContainer.children)
+                    .map(msg => {
+                        const isUser = msg.classList.contains('user-message');
+                        return `${isUser ? 'User' : 'AI'}: ${msg.textContent}`;
+                    })
+                    .join('\n');
+                
+                if (typeof window.saveChat === 'function') {
+                    window.saveChat(chatContent, window.firstMessage);
+                    window.isChatSaved = true; // Mark chat as saved
+                }
+            }
+
         } catch (error) {
             console.error("Error:", error);
-            thinkingMessage.innerText = "Error connecting to DysonASI server.";
-        } finally {
-            isProcessing = false;
+            if (thinkingMessage && thinkingMessage.parentNode) {
+                thinkingMessage.textContent = "Error connecting to DysonASI server.";
+            }
         }
-    }
+        window.isProcessing = false;
+    };
+
+    window.startNewThread = function() {
+        // Save existing chat before starting new one
+        if (messagesContainer && messagesContainer.children.length > 1 && !window.isChatSaved) {
+            const chatContent = Array.from(messagesContainer.children)
+                .map(msg => {
+                    const isUser = msg.classList.contains('user-message');
+                    return `${isUser ? 'User' : 'AI'}: ${msg.textContent}`;
+                })
+                .join('\n');
+            
+            // Get first user message as title
+            const firstUserMessage = Array.from(messagesContainer.children)
+                .find(msg => msg.classList.contains('user-message'))?.textContent || 'Untitled Chat';
+            
+            if (typeof window.saveChat === 'function') {
+                window.saveChat(chatContent, firstUserMessage);
+            }
+        }
+
+        window.chatHistory.push([]);
+        window.currentChatIndex = window.chatHistory.length - 1;
+        window.firstMessage = null;
+        window.isChatSaved = false;
+        
+        if (messagesContainer && inputField) {
+            messagesContainer.innerHTML = "";
+            inputField.value = "";
+            inputField.style.height = "auto";
+            
+            const welcomeMessage = document.createElement("div");
+            welcomeMessage.classList.add("message", "ai-message");
+            welcomeMessage.innerHTML = "<p>Hi, I'm DysonASI! How can I assist you today?</p>";
+            messagesContainer.appendChild(welcomeMessage);
+        }
+    };
 
     function formatResponse(responseText) {
         // Convert markdown-style formatting to HTML
-        responseText = responseText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-        responseText = responseText.replace(/\*(.*?)\*/g, "<em>$1</em>");
-        responseText = responseText.replace(/`(.*?)`/g, "<code>$1</code>");
-
-        // Handle code blocks
-        responseText = responseText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-            return `<pre><code class="language-${lang || ''}">${code.trim()}</code></pre>`;
-        });
-
-        // Handle lists
-        const lines = responseText.split("\n");
         let formattedLines = [];
         let inList = false;
-        let listType = null;
+        let listType = 'ul';
 
-        for (const line of lines) {
-            if (line.match(/^[0-9]+\./)) {
-                if (!inList || listType !== 'ol') {
-                    if (inList) formattedLines.push(listType === 'ul' ? '</ul>' : '</ol>');
-                    formattedLines.push('<ol>');
-                    inList = true;
-                    listType = 'ol';
-                }
-                formattedLines.push(`<li>${line.replace(/^[0-9]+\.\s*/, '')}</li>`);
-            } else if (line.match(/^[-*]\s/)) {
-                if (!inList || listType !== 'ul') {
-                    if (inList) formattedLines.push(listType === 'ul' ? '</ul>' : '</ol>');
+        responseText.split('\n').forEach(line => {
+            line = line.trim();
+            if (!line) return;
+
+            // Handle lists
+            if (line.startsWith('- ') || line.startsWith('* ')) {
+                if (!inList) {
                     formattedLines.push('<ul>');
                     inList = true;
                     listType = 'ul';
                 }
-                formattedLines.push(`<li>${line.replace(/^[-*]\s/, '')}</li>`);
+                formattedLines.push(`<li>${line.slice(2)}</li>`);
+            } else if (line.match(/^\d+\. /)) {
+                if (!inList) {
+                    formattedLines.push('<ol>');
+                    inList = true;
+                    listType = 'ol';
+                }
+                formattedLines.push(`<li>${line.slice(line.indexOf('.') + 2)}</li>`);
             } else {
                 if (inList) {
                     formattedLines.push(listType === 'ul' ? '</ul>' : '</ol>');
                     inList = false;
                 }
-                if (line.trim()) {
-                    formattedLines.push(`<p>${line}</p>`);
-                }
+                formattedLines.push(`<p>${line}</p>`);
             }
-        }
+        });
 
         if (inList) {
             formattedLines.push(listType === 'ul' ? '</ul>' : '</ol>');
@@ -138,34 +228,31 @@ document.addEventListener("DOMContentLoaded", function () {
         return formattedLines.join('\n');
     }
 
-    function startNewThread() {
-        chatHistory.push([]);
-        currentChatIndex = chatHistory.length - 1;
-        messagesContainer.innerHTML = "";
-        inputField.value = "";
-        inputField.style.height = "auto";
-        
-        const welcomeMessage = document.createElement("div");
-        welcomeMessage.classList.add("message", "ai-message");
-        welcomeMessage.innerHTML = "<p>Hi, I'm DysonASI! How can I assist you today?</p>";
-        messagesContainer.appendChild(welcomeMessage);
+    // Initialize chat if elements exist
+    if (inputField && sendButton) {
+        sendButton.addEventListener("click", window.sendMessage);
+        inputField.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                window.sendMessage();
+            }
+        });
     }
 
-    function handleKeyPress(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage();
-        }
+    // Initialize new thread button if it exists
+    const newThreadButton = document.querySelector(".new-thread");
+    if (newThreadButton) {
+        newThreadButton.addEventListener("click", window.startNewThread);
     }
 
-    // Event Listeners
-    document.querySelector(".new-thread").addEventListener("click", startNewThread);
-    sendButton.addEventListener("click", sendMessage);
-    inputField.addEventListener("keydown", handleKeyPress);
+    // Start new thread if no chat exists
+    if (window.currentChatIndex === -1) {
+        window.startNewThread();
+    }
+}
 
-    // Initialize
-    startNewThread();
-});
+// Make initializeChat globally available
+window.initializeChat = initializeChat;
 
 // Theme Toggle
 document.addEventListener("DOMContentLoaded", () => {

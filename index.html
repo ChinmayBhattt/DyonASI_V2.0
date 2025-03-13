@@ -11,6 +11,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
       
     <link rel="stylesheet" href="style.css">
+    <script defer src="chat.js"></script>
     <script defer src="script.js"></script>
     <script defer src="newchat.js"></script>
     <script defer src="newAPIKey.js"></script>
@@ -27,8 +28,7 @@
             <div class="sidebar-header">
                 <div class="company-logo">DysonASI</div>
                 <div class="new-thread">
-                    <span>New Thread</span>
-                    <span class="shortcut">⌘K</span>
+                 
                 </div>
             </div>
             <nav class="sidebar-nav">
@@ -49,6 +49,13 @@
         <div class="main-content">
             <div class="chat-header">
                 <h1>What do you want to know?</h1>
+                <div class="header-actions">
+                    <button class="new-chat-btn">
+                        <i class="fi fi-br-comment-medical"></i>
+                        <span class="tooltip">New Chat (⌘K)</span>
+                    </button>
+                  
+                </div>
             </div>
 
             <div class="messages-container">

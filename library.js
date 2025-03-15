@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const libraryHTML = `
             <div class="library-container">
                 <div class="library-header">
-                    <h1><i class="fas fa-book"></i> Library</h1>
+                    <h1><i class="fas fa-history"></i> History</h1>
                     <button class="delete-all-chats-btn" onclick="deleteAllChats()">
                         <i class="fas fa-trash"></i> Delete All Chats
                     </button>

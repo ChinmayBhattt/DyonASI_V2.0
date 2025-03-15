@@ -50,6 +50,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="loading">Loading articles...</div>
                 </div>
             </div>
+
+            <style>
+                .loading-indicator {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 20px;
+                    text-align: center;
+                    color: #666;
+                }
+
+                .loading-spinner {
+                    width: 30px;
+                    height: 30px;
+                    border: 3px solid #f3f3f3;
+                    border-top: 3px solid #3498db;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin-bottom: 10px;
+                }
+
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+
+                .no-image {
+                    background: #f5f5f5;
+                    height: 200px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #666;
+                }
+            </style>
         `;
         
         // Remove input wrapper when in discover mode
@@ -65,12 +100,15 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                currentPage = 1; // Reset page number when changing category
                 fetchArticles(btn.dataset.category);
             });
         });
 
-        // Fetch initial articles
+        // Fetch initial articles and setup infinite scroll
+        currentPage = 1;
         fetchArticles('general');
+        setupInfiniteScroll();
     }
 
     // Function to restore chat interface
@@ -166,22 +204,45 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to fetch articles from NewsAPI
-    async function fetchArticles(category) {
+    let currentPage = 1;
+    let isLoading = false;
+    let currentCategory = 'general';
+
+    async function fetchArticles(category, page = 1) {
         const articlesContainer = document.querySelector('.articles-container');
-        articlesContainer.innerHTML = '<div class="loading">Loading articles...</div>';
+        
+        if (page === 1) {
+            articlesContainer.innerHTML = '<div class="loading">Loading articles...</div>';
+            currentCategory = category;
+        } else {
+            // Add loading indicator at bottom
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'loading-indicator';
+            loadingIndicator.innerHTML = `
+                <div class="loading-spinner"></div>
+                <p>Loading more articles...</p>
+            `;
+            articlesContainer.appendChild(loadingIndicator);
+        }
 
         try {
-            const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${NEWS_API_KEY}`);
+            const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&page=${page}&pageSize=10&apiKey=${NEWS_API_KEY}`);
             const data = await response.json();
 
+            // Remove loading indicator if it exists
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+
             if (data.articles && data.articles.length > 0) {
-                articlesContainer.innerHTML = data.articles.map(article => `
+                const articlesHTML = data.articles.map(article => `
                     <div class="article-card" onclick="window.open('${article.url}', '_blank')">
                         ${article.urlToImage ? `
                             <div class="article-image-container">
-                                <img src="${article.urlToImage}" alt="${article.title}" class="article-image">
+                                <img src="${article.urlToImage}" alt="${article.title}" class="article-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                             </div>
-                        ` : ''}
+                        ` : '<div class="article-image-container"><div class="no-image">No Image Available</div></div>'}
                         <div class="article-content">
                             <h3 class="article-title">${article.title}</h3>
                             <p class="article-description">${article.description || ''}</p>
@@ -192,13 +253,50 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 `).join('');
-            } else {
+
+                if (page === 1) {
+                    articlesContainer.innerHTML = articlesHTML;
+                } else {
+                    articlesContainer.insertAdjacentHTML('beforeend', articlesHTML);
+                }
+            } else if (page === 1) {
                 articlesContainer.innerHTML = '<div class="error">No articles found for this category.</div>';
             }
         } catch (error) {
             console.error('Error fetching articles:', error);
-            articlesContainer.innerHTML = '<div class="error">Error loading articles. Please try again later.</div>';
+            if (page === 1) {
+                articlesContainer.innerHTML = '<div class="error">Error loading articles. Please try again later.</div>';
+            }
+        } finally {
+            isLoading = false;
         }
+    }
+
+    // Add scroll event listener for infinite scroll
+    function setupInfiniteScroll() {
+        const handleScroll = () => {
+            if (isLoading) return;
+
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+            
+            // Check if user has scrolled to near bottom
+            if (scrollTop + clientHeight >= scrollHeight - 300) {
+                isLoading = true;
+                currentPage++;
+                fetchArticles(currentCategory, currentPage);
+            }
+        };
+
+        // Add throttling to scroll event
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (!scrollTimeout) {
+                scrollTimeout = setTimeout(() => {
+                    handleScroll();
+                    scrollTimeout = null;
+                }, 100);
+            }
+        });
     }
 
     function setupEventListeners() {

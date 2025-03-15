@@ -638,4 +638,141 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Navigation state management
+window.currentPage = 'chat'; // Default page
+
+// Function to show the appropriate interface based on current page
+window.showCurrentInterface = function() {
+    const mainContent = document.querySelector('.main-content');
+    if (!mainContent) return;
+
+    // Remove any existing event listeners
+    const oldContent = mainContent.cloneNode(false);
+    mainContent.parentNode.replaceChild(oldContent, mainContent);
+
+    console.log('Current page:', window.currentPage);
+
+    switch (window.currentPage) {
+        case 'chat':
+            if (typeof window.restoreChatInterface === 'function') {
+                window.restoreChatInterface();
+            }
+            break;
+        case 'discover':
+            if (typeof createDiscoverInterface === 'function') {
+                createDiscoverInterface();
+            }
+            break;
+        // Add other cases as needed
+    }
+};
+
+// Update the existing setupEventListeners function
+window.setupEventListeners = function() {
+    console.log('Setting up event listeners');
+    
+    // Clear existing event listeners
+    const oldDiscoverLink = document.getElementById('discover-link');
+    const oldChatLink = document.getElementById('chat-link');
+    const oldImagesLink = document.getElementById('images-link');
+    const oldHistoryLink = document.getElementById('history-link');
+    
+    const newDiscoverLink = oldDiscoverLink?.cloneNode(true);
+    const newChatLink = oldChatLink?.cloneNode(true);
+    const newImagesLink = oldImagesLink?.cloneNode(true);
+    const newHistoryLink = oldHistoryLink?.cloneNode(true);
+    
+    // Replace old elements with new ones
+    if (oldDiscoverLink && newDiscoverLink) {
+        oldDiscoverLink.parentNode.replaceChild(newDiscoverLink, oldDiscoverLink);
+    }
+    if (oldChatLink && newChatLink) {
+        oldChatLink.parentNode.replaceChild(newChatLink, oldChatLink);
+    }
+    if (oldImagesLink && newImagesLink) {
+        oldImagesLink.parentNode.replaceChild(newImagesLink, oldImagesLink);
+    }
+    if (oldHistoryLink && newHistoryLink) {
+        oldHistoryLink.parentNode.replaceChild(newHistoryLink, oldHistoryLink);
+    }
+    
+    // Add click event listeners
+    if (newChatLink) {
+        newChatLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chat clicked');
+            
+            // Update current page
+            window.currentPage = 'chat';
+            
+            // Remove active class from all nav items and add to chat
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show chat interface immediately
+            if (typeof window.restoreChatInterface === 'function') {
+                window.restoreChatInterface();
+            }
+        });
+    }
+    
+    if (newDiscoverLink) {
+        newDiscoverLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Discover clicked');
+            
+            window.currentPage = 'discover';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+            
+            window.showCurrentInterface();
+        });
+    }
+    
+    if (newImagesLink) {
+        newImagesLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Images clicked');
+            
+            window.currentPage = 'images';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+        });
+    }
+    
+    if (newHistoryLink) {
+        newHistoryLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('History clicked');
+            
+            window.currentPage = 'history';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+        });
+    }
+};
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up event listeners
+    window.setupEventListeners();
+    
+    // Set initial active state
+    const chatLink = document.getElementById('chat-link');
+    if (chatLink) {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        chatLink.classList.add('active');
+    }
+    
+    // Show initial interface
+    window.showCurrentInterface();
+});
+
 

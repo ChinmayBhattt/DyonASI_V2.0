@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.querySelector('.main-content');
     const discoverLink = document.getElementById('discover-link');
     const chatLink = document.getElementById('chat-link');
-    const NEWS_API_KEY = '';
+    const NEWS_API_KEY = 'e991d40726ac4d388a6845656128d186';
     
     // Store the original chat interface
     let chatInterface = null;

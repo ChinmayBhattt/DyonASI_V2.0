@@ -247,10 +247,3 @@ function initializeChat() {
 }
 
 
-
-
-
-
-
-
-

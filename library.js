@@ -19,14 +19,30 @@ document.addEventListener('DOMContentLoaded', function() {
         saveChatInterface();
 
         const libraryHTML = `
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
+
             <div class="library-container">
                 <div class="library-header">
-                    <h1><i class="fas fa-history"></i> History</h1>
-                    <button class="delete-all-chats-btn" onclick="deleteAllChats()">
-                        <i class="fas fa-trash"></i> Delete All Chats
-                    </button>
+                    <div class="library-title">
+                        <span class="icon"></span> <i class="fi fi-bs-time-past" style="font-size: 21px;"></i>
+
+                        <h1>History</h1>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="chat-search" placeholder="Search your threads..." class="search-input" onkeyup="searchChats()">
+                    </div>
                 </div>
-                <div class="library-content">
+                <div class="threads-section">
+                    <div class="threads-header">
+                        <div class="threads-title">
+                            <span class="icon" ></span>  <i class="fi fi-bs-rectangle-history-circle-plus"></i>
+                            <h2>Save Chats</h2>
+                        </div>
+                        <button class="delete-all-btn" onclick="deleteAllChats()" title="Delete all chats">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                     <div class="saved-chats">
                         <!-- Saved chats will be displayed here -->
                     </div>
@@ -42,6 +58,135 @@ document.addEventListener('DOMContentLoaded', function() {
         
         mainContent.innerHTML = libraryHTML;
         displaySavedChats();
+
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .library-container {
+                padding: 20px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .library-header {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            .library-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .library-title h1 {
+                font-size: 24px;
+                font-weight: 600;
+                margin: 0;
+            }
+            .search-container {
+                width: 100%;
+            }
+            .search-input {
+                width: 100%;
+                padding: 10px 16px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.05);
+                color: #fff;
+                font-size: 14px;
+            }
+            .search-input:focus {
+                outline: none;
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+            .threads-section {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            .threads-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .threads-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .threads-title h2 {
+                font-size: 16px;
+                font-weight: 500;
+                margin: 0;
+            }
+            .delete-all-btn {
+                background: transparent;
+                border: none;
+                color: rgba(255, 255, 255, 0.5);
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 4px;
+            }
+            .delete-all-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.8);
+            }
+            .saved-chats {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .saved-chat-card {
+                padding: 16px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.05);
+                cursor: pointer;
+                transition: background 0.2s;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .saved-chat-card:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            .chat-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .chat-title {
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.9);
+            }
+            .chat-timestamp {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.5);
+            }
+            .chat-actions {
+                display: flex;
+                gap: 8px;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            .saved-chat-card:hover .chat-actions {
+                opacity: 1;
+            }
+            .chat-actions button {
+                background: transparent;
+                border: none;
+                color: rgba(255, 255, 255, 0.5);
+                cursor: pointer;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+            .chat-actions button:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.8);
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     // Function to restore chat interface
@@ -141,14 +286,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         savedChatsContainer.innerHTML = savedChats.map(chat => `
             <div class="saved-chat-card" data-id="${chat.id}">
-                <div class="chat-title">${chat.title}</div>
-                <div class="chat-timestamp">${chat.timestamp}</div>
+                <div class="chat-info">
+                    <div class="chat-title">${chat.title}</div>
+                    <div class="chat-timestamp">${chat.timestamp}</div>
+                </div>
                 <div class="chat-actions">
                     <button class="view-chat-btn" onclick="viewChat(${chat.id})">
-                        <i class="fas fa-eye"></i> View
+                        <i class="fas fa-eye"></i>
                     </button>
                     <button class="delete-chat-btn" onclick="deleteChat(${chat.id})">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -206,4 +353,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize
     setupEventListeners();
+
+    // Add search functionality
+    window.searchChats = function() {
+        const searchInput = document.getElementById('chat-search');
+        const searchTerm = searchInput.value.toLowerCase();
+        const savedChats = JSON.parse(localStorage.getItem('savedChats') || '[]');
+        
+        const filteredChats = savedChats.filter(chat => 
+            chat.title.toLowerCase().includes(searchTerm) || 
+            chat.content.toLowerCase().includes(searchTerm)
+        );
+        
+        const savedChatsContainer = document.querySelector('.saved-chats');
+        
+        if (filteredChats.length === 0) {
+            savedChatsContainer.innerHTML = '<div class="no-chats">No matching chats found</div>';
+            return;
+        }
+
+        savedChatsContainer.innerHTML = filteredChats.map(chat => `
+            <div class="saved-chat-card" data-id="${chat.id}">
+                <div class="chat-info">
+                    <div class="chat-title">${chat.title}</div>
+                    <div class="chat-timestamp">${chat.timestamp}</div>
+                </div>
+                <div class="chat-actions">
+                    <button class="view-chat-btn" onclick="viewChat(${chat.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="delete-chat-btn" onclick="deleteChat(${chat.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    };
 }); 

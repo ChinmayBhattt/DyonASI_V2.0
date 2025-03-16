@@ -54,5 +54,5 @@ Ensure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/ChinmayBhattt/DysonASI.git
-   cd DysonASI
+   git clone https://github.com/ChinmayBhattt/DyonASI_V2.0.git
+   cd DyonASI_V2.0

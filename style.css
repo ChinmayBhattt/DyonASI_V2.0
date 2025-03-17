@@ -2048,7 +2048,7 @@ body.light-mode #music-link.active {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 56px; /* YouTube's bottom nav height */
+        height: 56px;
         background: #000000;
         border-top: 1px solid #333;
         border-right: none;
@@ -2060,6 +2060,65 @@ body.light-mode #music-link.active {
 
     .sidebar-header, .sidebar-footer, .pro-upgrade {
         display: none;
+    }
+
+    /* Move account section to top right */
+    .user-section {
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding: 8px 16px;
+        background: #000000;
+        z-index: 1001;
+        border-bottom: 1px solid #333;
+        width: auto;
+    }
+
+    .account-dropdown {
+        width: auto;
+    }
+
+    .account-btn {
+        padding: 8px;
+        background: transparent;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .account-btn .username {
+        display: none;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: auto;
+        bottom: auto;
+        width: 200px;
+        margin-top: 8px;
+    }
+
+    /* Settings Panel Mobile Styles */
+    .settings-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .settings-panel.show {
+        right: 0;
+    }
+
+    .settings-panel-header {
+        padding: 16px;
+    }
+
+    .settings-panel-content {
+        padding: 16px;
     }
 
     .sidebar-nav {
@@ -2105,6 +2164,7 @@ body.light-mode #music-link.active {
 
     .main-content {
         margin-left: 0;
+        padding-top: 60px; /* Add space for top account section */
         padding-bottom: 72px;
         width: 100%;
         max-width: 100%;
@@ -2136,6 +2196,26 @@ body.light-mode #music-link.active {
         .input-wrapper {
             bottom: calc(56px + env(safe-area-inset-bottom));
         }
+
+        .user-section {
+            padding-top: max(8px, env(safe-area-inset-top));
+        }
     }
+}
+
+/* Light mode adjustments for mobile */
+body.light-mode .user-section {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.light-mode .account-btn {
+    color: #1b254b;
+}
+
+body.light-mode .dropdown-menu {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 

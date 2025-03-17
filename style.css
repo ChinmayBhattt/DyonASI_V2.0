@@ -2048,7 +2048,7 @@ body.light-mode #music-link.active {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 48px; /* YouTube's bottom nav height */
+        height: 56px;
         background: #000000;
         border-top: 1px solid #333;
         border-right: none;
@@ -2070,7 +2070,6 @@ body.light-mode #music-link.active {
         height: 100%;
         margin: 0;
         padding: 0;
-        max-width: 600px;
     }
 
     .nav-item {
@@ -2078,8 +2077,8 @@ body.light-mode #music-link.active {
         align-items: center;
         justify-content: center;
         padding: 0;
-        gap: 2px;
-        font-size: 10px;
+        gap: 4px;
+        font-size: 12px;
         text-align: center;
         border-radius: 0;
         width: 20%;
@@ -2087,19 +2086,16 @@ body.light-mode #music-link.active {
         color: #fff;
         background: transparent;
         border: none;
-        outline: none;
     }
 
     .nav-item i {
         font-size: 20px;
         margin: 0;
-        width: auto;
     }
 
     .nav-item.active {
         background: transparent;
         color: #fff;
-        outline: none;
     }
 
     .nav-item:hover {
@@ -2109,36 +2105,36 @@ body.light-mode #music-link.active {
 
     .main-content {
         margin-left: 0;
-        padding-bottom: 60px;
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .input-wrapper {
-        left: 0;
-        padding: 10px;
-        bottom: 48px;
+        padding-top: 0;
+        padding-bottom: 70px;
         width: 100%;
     }
 
     .messages-container {
         padding: 10px;
-        margin-bottom: 100px;
+        margin-bottom: 80px;
+    }
+
+    .input-wrapper {
+        left: 0;
+        padding: 10px;
+        bottom: 56px;
+        width: 100%;
     }
 
     /* Fix for iOS bottom safe area */
     @supports (padding: max(0px)) {
         .sidebar {
             padding-bottom: max(0px, env(safe-area-inset-bottom));
-            height: calc(48px + env(safe-area-inset-bottom));
+            height: calc(56px + env(safe-area-inset-bottom));
         }
 
         .main-content {
-            padding-bottom: calc(60px + env(safe-area-inset-bottom));
+            padding-bottom: calc(70px + env(safe-area-inset-bottom));
         }
 
         .input-wrapper {
-            bottom: calc(48px + env(safe-area-inset-bottom));
+            bottom: calc(56px + env(safe-area-inset-bottom));
         }
     }
 }

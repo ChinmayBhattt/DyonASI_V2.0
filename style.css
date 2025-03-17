@@ -2048,12 +2048,14 @@ body.light-mode #music-link.active {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: auto;
-        background: var(--bg-sidebar);
+        height: 60px;
+        background: var(--bg-dark);
         border-top: 1px solid var(--border-color);
         border-right: none;
         padding: 0;
         z-index: 1000;
+        display: flex;
+        justify-content: center;
     }
 
     .sidebar-header, .sidebar-footer, .pro-upgrade {
@@ -2062,48 +2064,58 @@ body.light-mode #music-link.active {
 
     .sidebar-nav {
         flex-direction: row;
-        justify-content: space-around;
-        padding: 8px 0;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+        padding: 0 20px;
         margin: 0;
+        height: 100%;
     }
 
     .nav-item {
         flex-direction: column;
-        padding: 8px;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
         gap: 4px;
         font-size: 12px;
         text-align: center;
         border-radius: 0;
-        width: 20%;
+        width: auto;
+        height: 100%;
+        color: var(--text-secondary);
     }
 
     .nav-item i {
-        font-size: 20px;
+        font-size: 24px;
         margin: 0;
         width: auto;
     }
 
     .nav-item.active {
         background: transparent;
-        color: var(--accent-color);
+        color: var(--text-primary);
         outline: none;
     }
 
     .nav-item:hover {
         background: transparent;
-        color: var(--accent-color);
+        color: var(--text-primary);
     }
 
     .main-content {
         margin-left: 0;
         padding-bottom: 80px;
         width: 100%;
+        max-width: 100%;
     }
 
     .input-wrapper {
         left: 0;
         padding: 10px;
         bottom: 70px;
+        width: 100%;
     }
 
     .chat-header {
@@ -2123,109 +2135,19 @@ body.light-mode #music-link.active {
         max-width: 90%;
     }
 
-    /* Adjust settings panel for mobile */
-    .settings-panel {
-        width: 100%;
-        right: -100%;
-    }
-
-    .settings-panel.show {
-        right: 0;
-    }
-
-    /* Adjust discover section for mobile */
-    .discover-container {
-        padding: 10px;
-    }
-
-    .categories-bar {
-        padding: 10px 0;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .category-btn {
-        white-space: nowrap;
-    }
-
-    .articles-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-
-    /* Adjust library section for mobile */
-    .library-container {
-        padding: 10px;
-    }
-
-    .library-content {
-        grid-template-columns: 1fr;
-    }
-
-    /* Adjust music section for mobile */
-    .music-container {
-        flex-direction: column;
-    }
-
-    .music-sidebar {
-        width: 100%;
-        min-width: 100%;
-        padding: 10px;
-    }
-
-    .music-content {
-        padding: 10px;
-    }
-
-    /* Adjust spaces section for mobile */
-    .spaces-container {
-        padding: 10px;
-    }
-
-    .hero-section {
-        padding: 20px 10px;
-    }
-
-    .prompt-container {
-        padding: 0;
-    }
-
-    .input-group {
-        flex-wrap: wrap;
-    }
-
-    .generate-btn {
-        width: 100%;
-        margin: 10px 0 0 0;
-    }
-
-    .images-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 10px;
-    }
-
-    .image-card {
-        min-height: 200px;
-    }
-
-    .generated-image {
-        height: 140px;
-    }
-}
-
-/* Fix for iOS bottom safe area */
-@supports (padding: max(0px)) {
-    @media screen and (max-width: 768px) {
+    /* Fix for iOS bottom safe area */
+    @supports (padding: max(0px)) {
         .sidebar {
             padding-bottom: max(0px, env(safe-area-inset-bottom));
-            height: auto;
+            height: calc(60px + env(safe-area-inset-bottom));
         }
 
         .main-content {
-            padding-bottom: calc(80px + max(0px, env(safe-area-inset-bottom)));
+            padding-bottom: calc(80px + env(safe-area-inset-bottom));
         }
 
         .input-wrapper {
-            bottom: calc(70px + max(0px, env(safe-area-inset-bottom)));
+            bottom: calc(70px + env(safe-area-inset-bottom));
         }
     }
 }

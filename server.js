@@ -29,6 +29,8 @@ const predefinedResponses = {
 
     // Added questions about Chinmay Bhatt
     "who is chinmay bhatt": "Chinmay Bhatt is a developer, engineer, and the creator of DysonASI. He is passionate about AI and technology.",
+    "founder of you": "Chinmay Bhatt is a developer, engineer, and the creator of DysonASI. He is passionate about AI and technology.",
+    "who made you": "Chinmay Bhatt is a developer, engineer, and the creator of DysonASI. He is passionate about AI and technology.",
     "chinmay bhatt": "Chinmay Bhatt is the visionary behind DysonASI, dedicated to advancing AI and making it more intelligent and helpful.",
     "what does chinmay bhatt do": "Chinmay Bhatt is a developer working on various AI and technology projects, including DysonASI.",
     "where is chinmay bhatt from": "Chinmay Bhatt is from India and is focused on creating innovative solutions using AI and technology.",

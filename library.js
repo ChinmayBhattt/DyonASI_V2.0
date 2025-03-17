@@ -21,11 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const libraryHTML = `
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
-
             <div class="library-container">
                 <div class="library-header">
                     <div class="library-title">
-                        <span class="icon"></span> <i class="fi fi-bs-time-past" style="font-size: 21px;"></i>
+                        <span class="icon"></span> <i class="fi fi-bs-time-past" style="font-size: px;"></i>
 
                         <h1>History</h1>
                     </div>

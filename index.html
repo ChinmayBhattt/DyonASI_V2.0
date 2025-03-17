@@ -15,6 +15,8 @@
     <script defer src="discover.js"></script>
     <script defer src="library.js"></script>
     <script defer src="spaces.js"></script>
+    <script defer src="music.js"></script>
+    <script defer src="settings.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
@@ -41,15 +43,35 @@
                 <a href="javascript:void(0)" class="nav-item" id="spaces-link" data-section="spaces">
                     <i class="fas fa-images"></i> Images
                 </a>
+                <a href="javascript:void(0)" class="nav-item" id="music-link" data-section="music">
+                    <i class="fas fa-music"></i> AI Music
+                </a>
                 <a href="javascript:void(0)" class="nav-item" id="library-link" data-section="library">
                     <i class="fas fa-history"></i>History
                 </a>
             </nav>
             <div class="sidebar-footer">
-          
                 <div class="user-section">
-                    <span class="username">chinmaybhatt</span>
-                    <button class="download-btn"><i class="fas fa-download"></i>Download</button>
+                    <div class="account-dropdown">
+                        <button class="account-btn">
+                            <span class="username">Account</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </a>
+                            <a href="https://chinmaybhattt.github.io/DysonASI-Platform/" target="_blank" class="dropdown-item">
+                                <i class="fi fi-bs-info"></i>
+                                About Us
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,3 +111,32 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const accountBtn = document.querySelector('.account-btn');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            
+            // Toggle dropdown when clicking account button
+            accountBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking anywhere else on the page
+            document.addEventListener('click', function() {
+                if (dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+            
+            // Prevent dropdown from closing when clicking inside it
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>

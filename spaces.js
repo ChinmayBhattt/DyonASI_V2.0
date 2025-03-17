@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const spacesLink = document.getElementById('spaces-link');
     const chatLink = document.getElementById('chat-link');
     
-    const STABILITY_API_KEY = "";
+    const STABILITY_API_KEY = "sk-6ZwMteRzDYZgAvmLz46LQ2OinBXSF03jsrZm9r1f4jepQYXW";
     const STABILITY_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image";
 
     // Store the original chat interface
@@ -123,6 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Creating spaces interface');
         saveChatInterface();
 
+        // Add image loading handler function
+        const handleImageLoad = (img) => {
+            img.classList.add('loaded');
+        };
+
         // Generate 20 example images with different prompts
         const examplePrompts = [
             "A beautiful sunset over mountains in digital art style",
@@ -176,10 +181,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Sort prompts based on filter
             let filteredPrompts = [...examplePrompts];
             if (filter === 'latest') {
-                // For latest, take the most recent 15 prompts
                 filteredPrompts = examplePrompts.slice(-15);
             } else if (filter === 'popular') {
-                // For popular, shuffle and take first 15 prompts
                 filteredPrompts = examplePrompts
                     .sort(() => Math.random() - 0.5)
                     .slice(0, 15);
@@ -193,12 +196,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 cards.push(`
                     <div class="image-card" onclick="document.getElementById('image-prompt').value = this.querySelector('.prompt-text').textContent; document.getElementById('image-prompt').focus();">
-                        <img src="https://source.unsplash.com/featured/800x800/?${encodeURIComponent(category)}&${timestamp}" 
-                             alt="${prompt}" 
-                             class="generated-image" 
-                             loading="lazy"
-                             crossorigin="anonymous"
-                             onerror="this.onerror=null; this.src='https://picsum.photos/800/800?random=${timestamp}'">
+                        <div class="image-container">
+                            <img src="https://source.unsplash.com/featured/800x800/?${encodeURIComponent(category)}&${timestamp}" 
+                                 alt="${prompt}" 
+                                 class="generated-image" 
+                                 loading="lazy"
+                                 crossorigin="anonymous"
+                                 onload="this.classList.add('loaded')"
+                                 onerror="this.onerror=null; this.src='https://picsum.photos/800/800?random=${timestamp}'">
+                        </div>
                         <div class="image-info">
                             <p class="prompt-text">${prompt}</p>
                             <div class="image-actions">
@@ -222,28 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 })();">
                                     <i class="fas fa-download"></i>
                                 </button>
-                                <button class="action-btn share-btn" onclick="event.stopPropagation(); (async () => {
-                                    try {
-                                        const img = this.closest('.image-card').querySelector('img');
-                                        const canvas = document.createElement('canvas');
-                                        canvas.width = img.naturalWidth;
-                                        canvas.height = img.naturalHeight;
-                                        const ctx = canvas.getContext('2d');
-                                        ctx.drawImage(img, 0, 0);
-                                        
-                                        canvas.toBlob(async (blob) => {
-                                            const url = URL.createObjectURL(blob);
-                                            try {
-                                                await shareImage(url, this.closest('.image-card').querySelector('.prompt-text').textContent);
-                                            } finally {
-                                                URL.revokeObjectURL(url);
-                                            }
-                                        }, 'image/jpeg', 0.9);
-                                    } catch (error) {
-                                        console.error('Error sharing image:', error);
-                                        alert('Failed to share image. Please try again.');
-                                    }
-                                })();">
+                                <button class="action-btn share-btn" onclick="event.stopPropagation();">
                                     <i class="fas fa-share"></i>
                                 </button>
                             </div>
@@ -263,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="prompt-container">
                         <div class="input-group">
                             <button class="dice-btn">
-                                <i class="fas fa-dice input-icon"></i>
+                                <i class="fas fa-dice"></i>
                             </button>
                             <input type="text" id="image-prompt" class="prompt-input" placeholder="Write a prompt to generate">
                             <button id="generate-btn" class="generate-btn">
@@ -323,7 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .hero-section {
                     text-align: center;
                     padding: 2rem 1rem;
-                    background: linear-gradient(135deg, #2a1f4c 0%, #1a1528 100%);
+                    background: #000000;
+                    border: 1px solid #333;
                     border-radius: 20px;
                     margin-bottom: 2rem;
                 }
@@ -358,33 +344,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 .input-group {
                     display: flex;
                     align-items: center;
-                    background: #1a1528;
+                    background: #111111;
+                    border: 1px solid #333;
                     border-radius: 12px;
                     padding: 0.5rem;
                     margin: 0;
                     width: 100%;
-                    flex-wrap: nowrap;
+                    position: relative;
                 }
 
-                @media (max-width: 480px) {
-                    .input-group {
-                        flex-wrap: wrap;
-                        gap: 0.5rem;
-                    }
+                .dice-btn {
+                    background: transparent;
+                    border: none;
+                    color: #888;
+                    cursor: pointer;
+                    padding: 0.5rem 1rem;
+                    transition: color 0.3s;
+                    position: absolute;
+                    left: 8px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 2;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
 
-                    .prompt-input {
-                        order: 3;
-                        width: 100%;
-                    }
+                .dice-btn:hover {
+                    color: #fff;
+                }
 
-                    .dice-btn {
-                        order: 1;
-                    }
+                .input-icon {
+                    font-size: 1.2rem;
+                }
 
-                    .generate-btn {
-                        order: 2;
-                        margin-left: auto;
-                    }
+                .prompt-input {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    color: white;
+                    padding: 1rem 1rem 1rem 3rem;
+                    font-size: 1rem;
+                    width: 100%;
+                }
+
+                .generate-btn {
+                    background: #111111;
+                    color: white;
+                    border: 1px solid #333;
+                    padding: 0.8rem 1.5rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: all 0.3s;
+                    margin-left: 8px;
+                }
+
+                .generate-btn:hover {
+                    background: #222222;
+                    border-color: #444;
                 }
 
                 .images-grid {
@@ -419,16 +437,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 .tab {
                     background: transparent;
                     border: none;
-                    color: #a8a8b3;
+                    color: #888;
                     padding: 0.5rem 1rem;
                     cursor: pointer;
                     font-size: clamp(0.8rem, 2.5vw, 1rem);
+                    transition: color 0.3s;
+                }
+
+                .tab:hover {
+                    color: #fff;
+                }
+
+                .tab.active {
+                    color: #fff;
+                    border-bottom: 2px solid #fff;
                 }
 
                 .generation-section {
                     text-align: center;
                     margin: 1.5rem auto;
-                    background: linear-gradient(135deg, #2a1f4c 0%, #1a1528 100%);
+                    background: #111111;
+                    border: 1px solid #333;
                     border-radius: 12px;
                     padding: 1.5rem;
                     max-width: min(400px, 90%);
@@ -493,42 +522,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         opacity: 1;
                     }
                 }
-                .dice-btn {
-                    background: transparent;
-                    border: none;
-                    color: #a8a8b3;
-                    cursor: pointer;
-                    padding: 0.5rem 1rem;
-                    transition: color 0.3s;
-                }
-                .dice-btn:hover {
-                    color: #8b3dff;
-                }
-                .input-icon {
-                    font-size: 1.2rem;
-                }
-                .prompt-input {
-                    flex: 1;
-                    background: transparent;
-                    border: none;
-                    color: white;
-                    padding: 1rem;
-                    font-size: 1rem;
-                    width: 100%;
-                }
-                .generate-btn {
-                    background: #8b3dff;
-                    color: white;
-                    border: none;
-                    padding: 0.8rem 1.5rem;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: bold;
-                    transition: background 0.3s;
-                }
-                .generate-btn:hover {
-                    background: #9f5bff;
-                }
                 .generation-status {
                     display: flex;
                     flex-direction: column;
@@ -547,8 +540,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     width: 40px;
                     height: 40px;
                     border: 3px solid transparent;
-                    border-top: 3px solid #8b3dff;
-                    border-right: 3px solid #8b3dff;
+                    border-top: 3px solid #fff;
+                    border-right: 3px solid #fff;
                     border-radius: 50%;
                     animation: spin 1s linear infinite;
                 }
@@ -560,8 +553,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     right: 3px;
                     bottom: 3px;
                     border: 3px solid transparent;
-                    border-top: 3px solid #ff3d9e;
-                    border-right: 3px solid #ff3d9e;
+                    border-top: 3px solid #666;
+                    border-right: 3px solid #666;
                     border-radius: 50%;
                     animation: spin-reverse 0.8s linear infinite;
                 }
@@ -596,10 +589,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     text-align: center;
                 }
                 .image-card {
-                    background: #1a1528;
+                    background: #111111;
+                    border: 1px solid #333;
                     border-radius: 12px;
                     overflow: hidden;
-                    transition: transform 0.3s;
+                    transition: transform 0.3s ease;
                     min-height: 350px;
                     display: flex;
                     flex-direction: column;
@@ -608,6 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 .image-card:hover {
                     transform: translateY(-5px);
+                    border-color: #444;
                 }
                 .image-card:hover::after {
                     content: "Click to use this prompt";
@@ -615,21 +610,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
-                    background: rgba(139, 61, 255, 0.9);
+                    background: rgba(0, 0, 0, 0.7);
                     color: white;
                     padding: 0.5rem 1rem;
                     border-radius: 8px;
                     font-size: 0.9rem;
-                }
-                .image-card:hover .generated-image {
-                    opacity: 0.7;
+                    z-index: 2;
                 }
                 .generated-image {
                     width: 100%;
                     height: 250px;
                     object-fit: cover;
-                    background: #1a1528;
-                    transition: opacity 0.3s;
+                    background: #111111;
+                    opacity: 0;
+                    transition: opacity 0.5s ease-in-out;
+                }
+                .generated-image.loaded {
+                    opacity: 1;
+                }
+                .image-card:hover .generated-image {
+                    opacity: 0.8;
+                }
+                .image-info {
+                    padding: 0.75rem;
+                    background: #111111;
+                    border-top: 1px solid #333;
+                }
+                .prompt-text {
+                    color: #fff;
+                    font-size: 0.9rem;
+                    margin-bottom: 1rem;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
                 }
                 .image-actions {
                     display: flex;
@@ -639,14 +657,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .action-btn {
                     background: transparent;
                     border: none;
-                    color: #8b3dff;
+                    color: #ffffff;
                     cursor: pointer;
                     padding: 0.5rem;
                     border-radius: 4px;
                     transition: background 0.3s;
                 }
                 .action-btn:hover {
-                    background: rgba(139, 61, 255, 0.1);
+                    background: rgba(255, 255, 255, 0.1);
                 }
                 .user-images-section {
                     margin: 2rem 0;

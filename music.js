@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.querySelector('.main-content');
     const musicLink = document.getElementById('music-link');
+    const chatLink = document.getElementById('chat-link');
     let currentInterface = null;
 
     // API Configuration
@@ -12,7 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
         currentInterface = mainContent.innerHTML;
     }
 
+    function restoreChatInterface() {
+        if (currentInterface) {
+            mainContent.innerHTML = currentInterface;
+        }
+    }
+
     function createMusicInterface() {
+        saveChatInterface();
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        musicLink.classList.add('active');
+        
         mainContent.innerHTML = `
             <div class="music-container">
                 <div class="music-sidebar">
@@ -511,8 +522,22 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(progressStyles);
 
-    musicLink.addEventListener('click', () => {
-        saveChatInterface();
-        createMusicInterface();
-    });
+    function setupEventListeners() {
+        musicLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            musicLink.classList.add('active');
+            createMusicInterface();
+        });
+
+        chatLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            chatLink.classList.add('active');
+            restoreChatInterface();
+        });
+    }
+
+    // Initialize event listeners
+    setupEventListeners();
 }); 

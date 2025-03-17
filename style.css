@@ -124,6 +124,8 @@ body {
 
 .nav-item.active {
     background: rgba(255, 255, 255, 0.1);
+    outline: 2px solid var(--border-color);
+    outline-offset: -2px;
 }
 
 .nav-item i {
@@ -671,6 +673,7 @@ body.light-mode .nav-item:hover {
 
 body.light-mode .nav-item.active {
     background: rgba(0, 0, 0, 0.05);
+    outline: 2px solid #e2e8f0;
 }
 
 body.light-mode .settings-panel {
@@ -1922,5 +1925,119 @@ body.light-mode .ai-description {
 
 body.light-mode .ai-metadata {
     color: #4a5568;
+}
+
+/* Music button styles */
+.music-button {
+    transition: all 0.2s ease;
+}
+
+.music-button:focus, 
+.music-button:active {
+    outline: 2px solid var(--border-color);
+    outline-offset: 2px;
+}
+
+.music-button.active {
+    background: rgba(255, 255, 255, 0.1);
+    outline: 2px solid var(--border-color);
+    outline-offset: 2px;
+}
+
+/* Light mode music button */
+body.light-mode .music-button:focus,
+body.light-mode .music-button:active,
+body.light-mode .music-button.active {
+    outline: 2px solid #e2e8f0;
+}
+
+/* Music genre button styles */
+.polyphony, .jazzcore, .djent, .gregorian, .electro {
+    background: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.polyphony:hover, .jazzcore:hover, .djent:hover, .gregorian:hover, .electro:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.polyphony:focus, .jazzcore:focus, .djent:focus, .gregorian:focus, .electro:focus,
+.polyphony:active, .jazzcore:active, .djent:active, .gregorian:active, .electro:active {
+    outline: 2px solid var(--border-color);
+    outline-offset: 2px;
+}
+
+.polyphony.active, .jazzcore.active, .djent.active, .gregorian.active, .electro.active {
+    background: rgba(255, 255, 255, 0.15);
+    outline: 2px solid var(--border-color);
+    outline-offset: 2px;
+}
+
+/* Light mode music genre buttons */
+body.light-mode .polyphony, 
+body.light-mode .jazzcore, 
+body.light-mode .djent,
+body.light-mode .gregorian,
+body.light-mode .electro {
+    background: #f0f0f0;
+    border: 1px solid #e2e8f0;
+}
+
+body.light-mode .polyphony:focus,
+body.light-mode .jazzcore:focus,
+body.light-mode .djent:focus,
+body.light-mode .gregorian:focus,
+body.light-mode .electro:focus,
+body.light-mode .polyphony:active,
+body.light-mode .jazzcore:active,
+body.light-mode .djent:active,
+body.light-mode .gregorian:active,
+body.light-mode .electro:active,
+body.light-mode .polyphony.active,
+body.light-mode .jazzcore.active,
+body.light-mode .djent.active,
+body.light-mode .gregorian.active,
+body.light-mode .electro.active {
+    outline: 2px solid #e2e8f0;
+}
+
+/* Sidebar navigation item styles - Fix for AI Music */
+#music-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+#music-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#music-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    outline: 2px solid var(--border-color);
+    outline-offset: -2px;
+}
+
+/* Light mode AI Music navigation item */
+body.light-mode #music-link {
+    color: #1b254b;
+}
+
+body.light-mode #music-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode #music-link.active {
+    background: rgba(0, 0, 0, 0.05);
+    outline: 2px solid #e2e8f0;
 }
 

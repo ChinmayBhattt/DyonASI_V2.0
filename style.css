@@ -2041,3 +2041,192 @@ body.light-mode #music-link.active {
     outline: 2px solid #e2e8f0;
 }
 
+/* Mobile Navigation Styles */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        background: var(--bg-sidebar);
+        border-top: 1px solid var(--border-color);
+        border-right: none;
+        padding: 0;
+        z-index: 1000;
+    }
+
+    .sidebar-header, .sidebar-footer, .pro-upgrade {
+        display: none;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 8px 0;
+        margin: 0;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        padding: 8px;
+        gap: 4px;
+        font-size: 12px;
+        text-align: center;
+        border-radius: 0;
+        width: 20%;
+    }
+
+    .nav-item i {
+        font-size: 20px;
+        margin: 0;
+        width: auto;
+    }
+
+    .nav-item.active {
+        background: transparent;
+        color: var(--accent-color);
+        outline: none;
+    }
+
+    .nav-item:hover {
+        background: transparent;
+        color: var(--accent-color);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-bottom: 80px;
+        width: 100%;
+    }
+
+    .input-wrapper {
+        left: 0;
+        padding: 10px;
+        bottom: 70px;
+    }
+
+    .chat-header {
+        padding: 10px;
+    }
+
+    .chat-header h1 {
+        font-size: 24px;
+    }
+
+    .messages-container {
+        padding: 10px;
+        margin-bottom: 140px;
+    }
+
+    .message {
+        max-width: 90%;
+    }
+
+    /* Adjust settings panel for mobile */
+    .settings-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .settings-panel.show {
+        right: 0;
+    }
+
+    /* Adjust discover section for mobile */
+    .discover-container {
+        padding: 10px;
+    }
+
+    .categories-bar {
+        padding: 10px 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-btn {
+        white-space: nowrap;
+    }
+
+    .articles-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    /* Adjust library section for mobile */
+    .library-container {
+        padding: 10px;
+    }
+
+    .library-content {
+        grid-template-columns: 1fr;
+    }
+
+    /* Adjust music section for mobile */
+    .music-container {
+        flex-direction: column;
+    }
+
+    .music-sidebar {
+        width: 100%;
+        min-width: 100%;
+        padding: 10px;
+    }
+
+    .music-content {
+        padding: 10px;
+    }
+
+    /* Adjust spaces section for mobile */
+    .spaces-container {
+        padding: 10px;
+    }
+
+    .hero-section {
+        padding: 20px 10px;
+    }
+
+    .prompt-container {
+        padding: 0;
+    }
+
+    .input-group {
+        flex-wrap: wrap;
+    }
+
+    .generate-btn {
+        width: 100%;
+        margin: 10px 0 0 0;
+    }
+
+    .images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    .image-card {
+        min-height: 200px;
+    }
+
+    .generated-image {
+        height: 140px;
+    }
+}
+
+/* Fix for iOS bottom safe area */
+@supports (padding: max(0px)) {
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
+            height: auto;
+        }
+
+        .main-content {
+            padding-bottom: calc(80px + max(0px, env(safe-area-inset-bottom)));
+        }
+
+        .input-wrapper {
+            bottom: calc(70px + max(0px, env(safe-area-inset-bottom)));
+        }
+    }
+}
+

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentInterface = null;
 
     // API Configuration
-    const API_KEY = "a734e0aef1a2ff7a8a18d769ad49703b";
+    const API_KEY = "";
     const API_ENDPOINT = "https://api.suno.ai/v1/music";
     const REFERENCE_AUDIO = 'https://tand-dev.github.io/audio-hosting/spinning-head-271171.mp3';
 
